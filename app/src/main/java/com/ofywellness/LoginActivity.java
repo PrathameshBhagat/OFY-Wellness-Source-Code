@@ -16,6 +16,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        firebaseAuth  = FirebaseAuth.getInstance();
 
 
         // Make the user signIn to his google account
@@ -71,22 +73,25 @@ public class LoginActivity extends AppCompatActivity {
 
                 // Show a Toast message
                 Toast.makeText(getApplicationContext(), "Google account: " + account.getIdToken() + account.getDisplayName(), Toast.LENGTH_SHORT).show();
+
                 AuthCredential firebaseCredential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
+
                 firebaseAuth.signInWithCredential(firebaseCredential).addOnCompleteListener(this, task -> {
                     // Check condition
                     if (task.isSuccessful()) {
                         // When task is successful redirect to profile activity display Toast
-                        startActivity(new Intent(MainActivity.this, ProfileActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                        displayToast("Firebase authentication successful");
+                        Snackbar.make((View)findViewById(R.id.google_image),"Firebase authentication successful" +firebaseAuth.getCurrentUser().getDisplayName(),3000).show();
+                        // startActivity(new Intent(LoginActivity.this, AddMealActivity.class).putExtra("ID", " "));
                     } else {
                         // When task is unsuccessful display Toast
-                        displayToast("Authentication Failed :" + task.getException().getMessage());
+                        Toast.makeText(this,"Authentication Failed :" + task.getException().getMessage(),Toast.LENGTH_SHORT).show();
+
                     }
                 });
 
                 // Check if the user is present in Firebase Database with email
                 // And if found move to next activity
-                ofyDatabase.findUserInFirebaseAndNext(LoginActivity.this, account.getEmail());
+                // ofyDatabase.findUserInFirebaseAndNext(LoginActivity.this, account.getEmail());
 
             } catch (Exception e) {
                 //Log Error
