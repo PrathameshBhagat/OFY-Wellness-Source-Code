@@ -553,6 +553,7 @@ public class ofyDatabase {
         // Context for showing toast messages
         Context context = addIntakeTab.getContext();
 
+        // Medicine logging layout
         ViewGroup medicineLayoutGroup = view.findViewById(R.id.sub_fragment_medicine_linear_layout);
 
         // Get the prescription from database and update the respective fields
@@ -629,9 +630,10 @@ public class ofyDatabase {
     /**
      * Gets today's logged medicine intake and updates views so that user sees latest data
      * which he entered before closing the app
-     * (this automatically gets updated in database but not in the app's intakeTab)
+     * (this automatically gets updated in database but not in the app's intakeTab UI)
      *
-     * @param view
+     * @param view          Medicine logging view containing views to be updated
+     * @param addIntakeTab AddIntakeTab to get context for show toast message
      */
     public static void getTodayLoggedMedicineIntakeAndUpdateViews(View view, AddIntakeTab addIntakeTab) {
 
@@ -648,12 +650,10 @@ public class ofyDatabase {
                 // if task is successful move forward
                 if (task.isSuccessful() && task.getResult().getValue() != null) {
 
-                    // Loop through all individual users
-
-
+                    // Get today's last logged medicine intake
                     HashMap savedMedicineIntake = (HashMap) task.getResult().getValue();
 
-
+                    // Loop through all individual medicine cards
                     for (int index = 1 ; index < 6 ; index++) {
 
                         TextView medicineNameTextView = (TextView) ((LinearLayout)((CardView) medicineFragment.getChildAt(index)).getChildAt(0)).getChildAt(1);
