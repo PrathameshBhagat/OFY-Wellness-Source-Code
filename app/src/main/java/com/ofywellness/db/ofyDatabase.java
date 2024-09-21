@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -544,10 +545,15 @@ public class ofyDatabase {
     /**
      * Updates views with the prescription from the database
      *
-     * @param context             Context to show toast message
-     * @param medicineLayoutGroup Layout containing the views to update
+     * @param view                View containing other views to be updated
+     * @param addIntakeTab        To get context to show toast message
      */
-    public static void getPrescriptionAndUpdateViews(ViewGroup medicineLayoutGroup, Context context) {
+     public static void getPrescriptionAndUpdateViews(View view, AddIntakeTab addIntakeTab) {
+
+        // Context for showing toast messages
+        Context context = addIntakeTab.getContext();
+
+        ViewGroup medicineLayoutGroup = view.findViewById(R.id.sub_fragment_medicine_linear_layout);
 
         // Get the prescription from database and update the respective fields
         ofyDatabaseref.child("Medicine").child("Prescription").addValueEventListener(new ValueEventListener() {
@@ -605,6 +611,9 @@ public class ofyDatabase {
 
                         // Show a toast message on success
                         Toast.makeText(context, "Updated the prescription", Toast.LENGTH_SHORT).show();
+
+                        // Call the method to get today's logged all other measures and display them to user by updating views
+                        ofyDatabase.getTodayLoggedMedicineIntakeAndUpdateViews(view, addIntakeTab);
                     }
             }
             @Override
@@ -612,6 +621,59 @@ public class ofyDatabase {
                     // Catch exception, show a toast error message and print error stack
                     Toast.makeText(context, "Error in updating the prescription ", Toast.LENGTH_SHORT).show();
                     error.toException().printStackTrace();
+            }
+        });
+
+    }
+
+    /**
+     * Gets today's logged medicine intake and updates views so that user sees latest data
+     * which he entered before closing the app
+     * (this automatically gets updated in database but not in the app's intakeTab)
+     *
+     * @param view
+     */
+    public static void getTodayLoggedMedicineIntakeAndUpdateViews(View view, AddIntakeTab addIntakeTab) {
+
+        ViewGroup medicineFragment = view.findViewById(R.id.sub_fragment_medicine_linear_layout);
+        // Context to show toast messages
+        Context context = addIntakeTab.getContext();
+
+        // Get the users data and add on complete listener to run method on obtaining data
+        ofyDatabaseref.child("Medicine").child(String.valueOf(LocalDate.now())).get().addOnCompleteListener(task -> {
+
+            // Simple try catch block
+            try {
+
+                // if task is successful move forward
+                if (task.isSuccessful() && task.getResult().getValue() != null) {
+
+                    // Loop through all individual users
+
+
+                    HashMap savedMedicineIntake = (HashMap) task.getResult().getValue();
+
+
+                    for (int index = 1 ; index < 6 ; index++) {
+
+                        TextView medicineNameTextView = (TextView) ((LinearLayout)((CardView) medicineFragment.getChildAt(index)).getChildAt(0)).getChildAt(1);
+                        TextView medicineIntakeTextView = (TextView) ((LinearLayout)((CardView) medicineFragment.getChildAt(index)).getChildAt(0)).getChildAt(2);
+                        String medicineName = medicineNameTextView.getText().toString();
+
+                        String prescriptionString = medicineIntakeTextView.getText().toString();
+                        prescriptionString = prescriptionString.substring(prescriptionString.indexOf(" "));
+
+                        medicineIntakeTextView.setText(savedMedicineIntake.getOrDefault(medicineName,0) + prescriptionString);
+
+                    }
+
+
+                }
+
+            } catch (Exception e) {
+                // Catch exception, show a toast error message and print error stack
+                Toast.makeText(context, "Error getting the user in database", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
             }
         });
 
@@ -803,7 +865,8 @@ public class ofyDatabase {
         });
 
     }
-    /*
+
+    /**
      * Gets today's all the other measures (like water intake) and update's views with logged data
      *
      * @param view         AddIntakeTab's view to update its other views

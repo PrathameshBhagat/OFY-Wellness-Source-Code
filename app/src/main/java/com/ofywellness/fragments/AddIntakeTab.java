@@ -65,12 +65,10 @@ public class AddIntakeTab extends Fragment {
         AddIntakeTab.view = view;
 
         // Button for moving to add meal activity
-        view.findViewById(R.id.add_meal_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        view.findViewById(R.id.add_meal_button).setOnClickListener(v -> {
                 // Start new activity with intent to move to add meal activity
-                startActivity(new Intent(requireActivity(), AddMealActivity.class).putExtra("ID",getActivity().getIntent().getStringExtra("ID")));
-            }
+                startActivity(new Intent(requireActivity(), AddMealActivity.class)
+                    .putExtra("ID", getActivity().getIntent().getStringExtra("ID")));
         });
 
         // Call method to add functionality to update the medicine intake locally (not on database)
@@ -78,7 +76,7 @@ public class AddIntakeTab extends Fragment {
 
         // Call the method to update the prescription ( 10 in "1 of 10" ) as soon as the page loads
         ofyDatabase.getPrescriptionAndUpdateViews(view.findViewById(R.id.sub_fragment_medicine_linear_layout)
-                , requireActivity());
+                , this);
 
         // Call the method to get today's logged all other measures and display them to user by updating views
         ofyDatabase.getTodaysLoggedOtherMeasuresAndUpdateViews(view, this);
