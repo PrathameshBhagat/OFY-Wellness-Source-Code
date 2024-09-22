@@ -1,5 +1,7 @@
 package com.ofywellness;
 
+import static com.ofywellness.db.ofyDatabase.newFindUserInFirebaseAndNext;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -72,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
                 GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult();
 
                 // Show a Toast message
-                Toast.makeText(getApplicationContext(), "Google account: " + account.getIdToken() + account.getDisplayName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Google account: " + account.getDisplayName(), Toast.LENGTH_SHORT).show();
 
                 AuthCredential firebaseCredential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
 
@@ -80,8 +82,12 @@ public class LoginActivity extends AppCompatActivity {
                     // Check condition
                     if (task.isSuccessful()) {
                         // When task is successful redirect to profile activity display Toast
-                        Snackbar.make((View)findViewById(R.id.google_image),"Firebase authentication successful" +firebaseAuth.getCurrentUser().getDisplayName(),3000).show();
-                        // startActivity(new Intent(LoginActivity.this, AddMealActivity.class).putExtra("ID", " "));
+
+
+                        Snackbar.make(findViewById(R.id.google_image),"Authentication successful" + firebaseAuth.getCurrentUser().getUid(),3000).show();
+
+                        newFindUserInFirebaseAndNext(this, firebaseAuth.getCurrentUser().getUid());
+
                     } else {
                         // When task is unsuccessful display Toast
                         Toast.makeText(this,"Authentication Failed :" + task.getException().getMessage(),Toast.LENGTH_SHORT).show();

@@ -1,6 +1,7 @@
 package com.ofywellness;
 
 import static com.ofywellness.db.ofyDatabase.findUserInFirebaseAndNext;
+import static com.ofywellness.db.ofyDatabase.newFindUserInFirebaseAndNext;
 
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class LauncherActivity extends AppCompatActivity {
 
@@ -37,14 +39,14 @@ public class LauncherActivity extends AppCompatActivity {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
         // Check if no past account was found
-        if ( account == null)
+        if ( account == null || FirebaseAuth.getInstance().getCurrentUser() == null )
             // If no account fount start the LoginActivity to make user login
             startActivity(new Intent(this, LoginActivity.class));
 
         else
             // Else If a google account was found look for the account in database
             // And move to next activity
-            findUserInFirebaseAndNext(this, account.getEmail());
+            newFindUserInFirebaseAndNext(this, FirebaseAuth.getInstance().getCurrentUser().getUid());
 
     }
 }

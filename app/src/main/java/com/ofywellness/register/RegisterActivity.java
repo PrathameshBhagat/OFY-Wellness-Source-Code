@@ -14,7 +14,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.ofywellness.HomeActivity;
 import com.ofywellness.R;
-import com.ofywellness.db.ofyDatabase;
+
+import static com.ofywellness.db.ofyDatabase.addNewUserToFirebaseAndNext;
+
 import com.ofywellness.modals.User;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -89,16 +91,8 @@ public class RegisterActivity extends AppCompatActivity {
                     RegisterActivity.USER_HEIGHT
             );
 
-            // Add user to the database and get UserID
-            String userID = ofyDatabase.addNewUserToFirebase(ofyNewUser, c);
-            // If userID is not empty
-            if (!userID.isEmpty()) {
-                // Create intent to move to next activity and provide it the UserID
-                Intent nextActivity = new Intent(c, HomeActivity.class);
-                nextActivity.putExtra("ID", userID);
-                // Start the Intent
-                c.startActivity(nextActivity);
-            }
+            // Add user to the database and move to next Activity
+            addNewUserToFirebaseAndNext(ofyNewUser, c);
 
         } catch(Exception e){
             // If found exception make a toast to show message to user and print stack trace

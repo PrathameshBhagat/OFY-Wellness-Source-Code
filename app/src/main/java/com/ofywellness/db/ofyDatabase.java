@@ -5,6 +5,7 @@ import static androidx.core.content.ContextCompat.startActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,8 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,6 +28,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.annotations.NotNull;
 import com.ofywellness.HomeActivity;
+import com.ofywellness.LoginActivity;
 import com.ofywellness.R;
 import com.ofywellness.fragments.AddIntakeTab;
 import com.ofywellness.fragments.TrackDietTab;
@@ -44,13 +48,63 @@ public class ofyDatabase {
     private static DatabaseReference ofyDatabaseref;
     private static ArrayList<Meal> allMealsFound;
 
-    /**
-     * Add new user to Firebase Database
-     *
+    /**<pre class="prettyprint">
+     * Add new user to Firebase Database.
+     * User login flow is as follows:
+     * ( App   -> LauncherActivity -> LoginActivity -> RegisterActivity -> HomeActivity
+     * Starts)        |                                                         |
+     *                | ----------> If logged in and registered --------------> |
      * @param ofyUser The user data model object
      * @param context The context to show toast message
      * @return The auto-generated UserID of this user
      */
+    public static void addNewUserToFirebaseAndNext(User ofyUser, Context context) {
+
+        try {
+            // Get database reference
+            ofyDatabaseref = FirebaseDatabase.getInstance().getReference();
+
+
+            // Get the user's key (currently UserID) to identify individual user
+            String key = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            Log.e("UID", key);
+
+
+            // Set operation to create a new user and set his information at proper location
+            ofyDatabaseref.child("Users/" + key).setValue(ofyUser).addOnCompleteListener( task -> {
+
+                // If user's information was saved successfully
+                if (task.isSuccessful()){
+
+                    Log.e("Was task successfull ?",task.isSuccessful() + "");
+                    Log.e("Was task successfull ?",task.isSuccessful() + "");
+
+                    // We move the database reference to a new location
+                    // So that all the other data gets stored in a separate location to avoid data congestion
+                    // So we first get to the root and then move to desired location which has user's location in its path,
+                    // This is important as database will only allow us access to this location
+                    ofyDatabaseref = ofyDatabaseref.getRoot().child("Intake").child(key);
+
+                    Intent nextActivity = new Intent(context, HomeActivity.class)
+                            .putExtra("ID", key);
+
+                    // Start the Intent
+                    context.startActivity(nextActivity);
+                    ((Activity)context).finish();
+
+                }
+
+            });
+
+
+        } catch (Exception e) {
+            // Catch exception, show a toast error message and print error stack
+            Toast.makeText(context, "Error creating new user in database", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
+
     public static String addNewUserToFirebase(User ofyUser, Context context) {
         try {
             // Get database reference
@@ -79,11 +133,15 @@ public class ofyDatabase {
         return "";
     }
 
+
+
     /**
      * Get UserID from  Firebase Database if user exists
      *
      * @param ofyUserEmail The email of current user to find in database
      * @param context      The context to show toast message
+     * @see  ofyDatabase#addNewUserToFirebase(User, Context) See user login flow {@link ofyDatabase#addNewUserToFirebase(User, Context)}here
+     *
      */
     public static void findUserInFirebaseAndNext(Context context, String ofyUserEmail) {
 
@@ -144,6 +202,54 @@ public class ofyDatabase {
                     Toast.makeText(context, "Error getting the user in database", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
+            }
+        });
+
+    }
+
+    /**
+     * ukiukiu
+     */
+    public static void newFindUserInFirebaseAndNext(Activity loginActivity, String Uid) {
+
+        // Get the Firebase Database reference to users
+        ofyDatabaseref = FirebaseDatabase.getInstance().getReference();
+
+        // Get the users data and add on complete listener to run method on obtaining data
+        ofyDatabaseref.child("Users").child(Uid).get().addOnCompleteListener(task -> {
+            // Simple try catch block
+            try {
+
+                // if task is successful move forward
+                if (task.isSuccessful()) {
+
+                    // If the user exists in Firebase Database move to home page
+                    if (task.getResult().getValue() != null) {
+
+                        // First make the database reference point to this user's intake
+                        ofyDatabaseref = ofyDatabaseref.getRoot().child("Intake").child(Uid);
+
+                        // Create intent to move to new activity
+                        Intent intent = new Intent(loginActivity, HomeActivity.class);
+
+                        // And move to next activity and provide UserID
+                        startActivity(loginActivity, intent.putExtra("ID", Uid), null);
+                    } else {
+                        // Else register as a new user, by moving to register activity
+                        startActivity(loginActivity, new Intent(loginActivity, RegisterActivity.class).putExtra("ID", Uid), null);
+                    }
+
+                    // Finish current activity, as have moved to the next activity
+                    loginActivity.finish();
+
+                } else {
+                    // Else if the task was unsuccessful ask user to retry
+                    Toast.makeText(loginActivity.getBaseContext(), "Please try again", Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                // Catch exception, show a toast error message and print error stack
+                Snackbar.make(loginActivity.findViewById(R.id.google_image), "Error : " + e.getMessage(), 3000).show();
+                e.printStackTrace();
             }
         });
 
