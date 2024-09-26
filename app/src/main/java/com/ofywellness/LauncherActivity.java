@@ -38,14 +38,21 @@ public class LauncherActivity extends AppCompatActivity {
         // Look for the google account which user already logged in
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
-        // Check if no past account was found
+        // Check if no past account exists, (neither in firebase nor in google)
         if ( account == null || FirebaseAuth.getInstance().getCurrentUser() == null )
-            // If no account fount start the LoginActivity to make user login
+            // If an account does not exists, start the LoginActivity to make user login to his account
             startActivity(new Intent(this, LoginActivity.class));
 
         else
-            // Else If a google account was found look for the account in database
-            // And move to next activity
+            // Else If an account exists look for the account in firebase "database" and move to next activity
+            //
+            // Point to be noted "firebase" stores users data in itself as well but with minimal details
+            // This detail lies in result of getCurrentUser()
+            //
+            // But we also store users data in "our" database ("firebase database")
+            // So that we can also store user's height, weight and any other parameter we want
+            // Which is not possible by getCurrentUser() which offers minimal details like email, name etc.
+            // So we only get user ID from firebase and record user detail by RegisterActivity and store it
             newFindUserInFirebaseAndNext(this, FirebaseAuth.getInstance().getCurrentUser().getUid());
 
     }
