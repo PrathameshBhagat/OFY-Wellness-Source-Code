@@ -49,7 +49,7 @@ public class PhoneTab extends Fragment {
             RegisterActivity.USER_PHONE = phone;
 
             // If phone is appropriate and valid move to next tab
-             RegisterActivity.registerUser();
+             new RegisterActivity().registerUser();
 
         });
 

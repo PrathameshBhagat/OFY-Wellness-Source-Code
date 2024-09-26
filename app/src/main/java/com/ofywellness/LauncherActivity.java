@@ -1,6 +1,5 @@
 package com.ofywellness;
 
-import static com.ofywellness.db.ofyDatabase.findUserInFirebaseAndNext;
 import static com.ofywellness.db.ofyDatabase.newFindUserInFirebaseAndNext;
 
 import android.content.Intent;
@@ -39,7 +38,7 @@ public class LauncherActivity extends AppCompatActivity {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
         // Check if no past account exists, (neither in firebase nor in google)
-        if ( account == null || FirebaseAuth.getInstance().getCurrentUser() == null )
+        if (account == null || FirebaseAuth.getInstance().getCurrentUser() == null )
             // If an account does not exists, start the LoginActivity to make user login to his account
             startActivity(new Intent(this, LoginActivity.class));
 

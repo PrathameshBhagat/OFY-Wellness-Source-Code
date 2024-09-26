@@ -1,7 +1,6 @@
 package com.ofywellness.register;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -12,7 +11,6 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.ofywellness.HomeActivity;
 import com.ofywellness.R;
 
 import static com.ofywellness.db.ofyDatabase.addNewUserToFirebaseAndNext;
@@ -30,7 +28,6 @@ public class RegisterActivity extends AppCompatActivity {
     static String USER_PHONE;
     static String USER_GENDER;
 
-    static Context c;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +36,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         // Assign the progress bar to indicate current tab position
         ProgressBar progressBar = findViewById(R.id.register_progressBar);
-
-        // Set the context
-        c= RegisterActivity.this;
 
         // Assign register view pager
         registerViewPager2 = findViewById(R.id.register_view_pager);
@@ -72,13 +66,12 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-    static void registerUser() {
-
+    void registerUser() {
         // Simple try catch block
         try {
 
             // Get current google account
-            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(c);
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
             // Create new User to add to database
             User ofyNewUser = new User(account.getEmail(),
@@ -92,11 +85,11 @@ public class RegisterActivity extends AppCompatActivity {
             );
 
             // Add user to the database and move to next Activity
-            addNewUserToFirebaseAndNext(ofyNewUser, c);
+            addNewUserToFirebaseAndNext(ofyNewUser, this);
 
         } catch(Exception e){
             // If found exception make a toast to show message to user and print stack trace
-            Toast.makeText(c, "Unable to register user, please close the app and try again", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Unable to register user, please close the app and try again", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
