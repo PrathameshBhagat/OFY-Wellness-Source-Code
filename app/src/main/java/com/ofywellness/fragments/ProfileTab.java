@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.ofywellness.LoginActivity;
@@ -29,6 +31,13 @@ public class ProfileTab extends Fragment {
         // Inflate the layout for this fragment and store it,
         // modification for getting the view object
         View view = inflater.inflate(R.layout.fragment_profile_tab, container, false);
+
+        // Get current logged in user
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this.getActivity());
+
+        // Set user name and email to display to the user
+        ((TextView) view.findViewById(R.id.profile_user_name_text_view)).setText(account.getDisplayName());
+        ((TextView) view.findViewById(R.id.profile_email_text_view)).setText(account.getEmail());
 
         // Google signout functionality
         GoogleSignInOptions gso;

@@ -22,4 +22,8 @@
     <string name="Water_Intake">%1$s Glass</string>
     <string name="Weight_Logged">%1$s Kg</string>
 
+    <!-- Profile tab-->
+    <string name="user_name">User Name</string>
+    <string name="email">Email</string>
+
 </resources>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/messaging_chat_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/messaging_message_relative_layout" />
+
+    <RelativeLayout
+        android:id="@+id/messaging_message_relative_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <EditText
+            android:id="@+id/messaging_message_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_toStartOf="@id/messaging_send_card_view"
+            android:background="@color/white"
+            android:hint="Message"
+            android:padding="10dp"
+            android:textSize="15sp" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/messaging_send_card_view"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            app:cardCornerRadius="30dp">
+
+            <ImageView
+                android:id="@+id/messaging_send_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/green"
+                android:padding="10dp"
+                android:src="@drawable/send_icon" />
+
+        </androidx.cardview.widget.CardView>
+
+
+    </RelativeLayout>
+
+</RelativeLayout>
