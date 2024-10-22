@@ -32,12 +32,6 @@ public class ProfileTab extends Fragment {
         // modification for getting the view object
         View view = inflater.inflate(R.layout.fragment_profile_tab, container, false);
 
-        // Google signout functionality
-        GoogleSignInOptions gso;
-        GoogleSignInClient gsc;
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(requireActivity(), gso);
-
         // Get current logged in user
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this.getActivity());
 
@@ -45,6 +39,11 @@ public class ProfileTab extends Fragment {
         ((TextView) view.findViewById(R.id.profile_user_name_text_view)).setText(account.getDisplayName());
         ((TextView) view.findViewById(R.id.profile_email_text_view)).setText(account.getEmail());
 
+        // Google signout functionality
+        GoogleSignInOptions gso;
+        GoogleSignInClient gsc;
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        gsc = GoogleSignIn.getClient(requireActivity(), gso);
 
         // Set onClick listener to the log out card view
         view.findViewById(R.id.profile_logout_card).setOnClickListener(view1 -> {
