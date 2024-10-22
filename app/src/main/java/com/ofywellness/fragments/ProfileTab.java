@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.ofywellness.LoginActivity;
@@ -35,6 +37,14 @@ public class ProfileTab extends Fragment {
         GoogleSignInClient gsc;
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc = GoogleSignIn.getClient(requireActivity(), gso);
+
+        // Get current logged in user
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this.getActivity());
+
+        // Set user name and email to display to the user
+        ((TextView) view.findViewById(R.id.profile_user_name_text_view)).setText(account.getDisplayName());
+        ((TextView) view.findViewById(R.id.profile_email_text_view)).setText(account.getEmail());
+
 
         // Set onClick listener to the log out card view
         view.findViewById(R.id.profile_logout_card).setOnClickListener(view1 -> {
