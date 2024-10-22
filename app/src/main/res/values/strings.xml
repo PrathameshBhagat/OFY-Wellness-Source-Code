@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">OFYWellness</string>
+
+    <string name="web_client_id">17316592795-bnnl6u7vvp4npb59pjdbb5fd5063b959.apps.googleusercontent.com</string>
     <string name="price">₹<b><big><big>100</big></big></b>/hr</string>
 
 
@@ -21,5 +23,6 @@
     <!-- Add intake tab -->
     <string name="Water_Intake">%1$s Glass</string>
     <string name="Weight_Logged">%1$s Kg</string>
+
 
 </resources>
