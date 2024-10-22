@@ -7,7 +7,62 @@
     android:orientation="vertical"
     tools:context=".fragments.ProfileTab">
 
-    <!-- Card View for for update functionality -->
+    <!-- Card View for user's mini-profile display -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/profile_user_name_email_photo_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="15dp">
+
+        <!-- Linear Layout for user's mini-profile display-->
+        <LinearLayout
+            android:id="@+id/profile_username_email_photo_linear_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- ImageView for user profile photo -->
+            <ImageView
+                android:id="@+id/profile_photo_image_view"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/profile_icon"
+                android:textSize="14sp" />
+
+            <!-- Linear Layout for user name and email display-->
+            <LinearLayout
+                android:id="@+id/profile_username_email_linear_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:orientation="vertical">
+
+                <!-- Text View for user name display -->
+                <TextView
+                    android:id="@+id/profile_user_name_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/user_name"
+                    android:textColor="#000000"
+                    android:textSize="20sp" />
+
+                <!--Text View for user email display-->
+                <TextView
+                    android:id="@+id/profile_email_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/email"
+                    android:textColor="@color/common_google_signin_btn_text_light"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Card View for medicine prescription and diet target update functionality -->
     <androidx.cardview.widget.CardView
         android:id="@+id/profile_update_prescription_card"
         android:layout_width="match_parent"
