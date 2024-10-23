@@ -14,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -27,6 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.annotations.NotNull;
 import com.ofywellness.HomeActivity;
 import com.ofywellness.R;
+import com.ofywellness.adapters.ChatAdapter;
 import com.ofywellness.fragments.AddIntakeTab;
 import com.ofywellness.fragments.TrackDietTab;
 import com.ofywellness.fragments.ViewMealTab;
@@ -865,22 +868,60 @@ public class ofyDatabase {
         try {
 
             // Set operation to push to automatically get unique UserID with a storage location
-            ofyDatabaseref.child("Messages").child(String.valueOf(System.currentTimeMillis())).setValue(mChat).addOnCompleteListener(new OnCompleteListener<Void>() {
+            ofyDatabaseref.getRoot().child("Messages").child(String.valueOf(System.currentTimeMillis())).setValue(mChat).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
-                        Snackbar.make(view, "Sent", Snackbar.LENGTH_SHORT).show();
                     } else throw new RuntimeException(task.getException());
                 }
             });
 
         } catch (Exception e) {
-            // Catch exception, show a toast error message and print error stack
-            Toast.makeText(context, "Message not sent", Toast.LENGTH_SHORT).show();
+            // Catch exception, show a snack bar error message and print error stack
+            Snackbar.make(view, "Message not sent", Snackbar.LENGTH_SHORT).show();
             e.printStackTrace();
         }
 
     }
 
 
+    public static void readAllMessages(View viewById, FragmentActivity fragmentActivity, RecyclerView mChatRecycler) {
+        // Simple try catch block
+        try {
+
+            ArrayList<Chat> mChats = new ArrayList<>();
+
+            // Set operation to push to automatically get unique UserID with a storage location
+            ofyDatabaseref.getRoot().child("Messages").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                    if( snapshot.exists() ){
+
+                        for (DataSnapshot chatSnapshot: snapshot.getChildren()) {
+
+                            Chat mChat = (Chat) chatSnapshot.getValue(Chat.class);
+
+                            mChats.add(mChat);
+
+                        }
+                        mChatRecycler.setAdapter(new ChatAdapter(fragmentActivity, mChats));
+                    }
+
+
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+        } catch (Exception e) {
+            // Catch exception, show a toast error message and print error stack
+            Toast.makeText(fragmentActivity, "Message not sent", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
 }
