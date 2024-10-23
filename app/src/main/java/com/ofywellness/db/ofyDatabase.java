@@ -886,6 +886,7 @@ public class ofyDatabase {
 
 
     public static void readAllMessages(View viewById, FragmentActivity fragmentActivity, RecyclerView mChatRecycler) {
+
         // Simple try catch block
         try {
 
@@ -896,11 +897,13 @@ public class ofyDatabase {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
 
+                    mChats.clear();
+
                     if( snapshot.exists() ){
 
                         for (DataSnapshot chatSnapshot: snapshot.getChildren()) {
 
-                            Chat mChat = (Chat) chatSnapshot.getValue(Chat.class);
+                            Chat mChat = chatSnapshot.getValue(Chat.class);
 
                             mChats.add(mChat);
 
