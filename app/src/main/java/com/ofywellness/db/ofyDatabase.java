@@ -861,19 +861,21 @@ public class ofyDatabase {
     /**
      * Sends message to all users
      *
-     * @param context The context to show toast message
+     * @param view  The view to show error snack-bar in
+     * @param mChat The chat object with the message to be sent
      */
-    public static void sendMessageToAll(View view, Context context, Chat mChat) {
+    public static void sendMessageToAll(View view, Chat mChat) {
 
+        // Simple try-catch block
         try {
 
             // Set operation to push to automatically get unique UserID with a storage location
-            ofyDatabaseref.getRoot().child("Messages").child(String.valueOf(System.currentTimeMillis())).setValue(mChat).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                    } else throw new RuntimeException(task.getException());
-                }
+            ofyDatabaseref.getRoot().child("Messages").child(String.valueOf(System.currentTimeMillis())).setValue(mChat).addOnCompleteListener(task -> {
+
+                // If task was not successful
+                if (!task.isSuccessful())
+                    // Throw an exception, if task is not successful
+                    throw new RuntimeException(task.getException());
             });
 
         } catch (Exception e) {
@@ -884,12 +886,19 @@ public class ofyDatabase {
 
     }
 
-
-    public static void readAllMessages(View viewById, FragmentActivity fragmentActivity, RecyclerView mChatRecycler) {
+    /**
+     * Reads messages from all other users and displays them to the current user
+     *
+     * @param view      The view to show error snack-bar in
+     * @param context   The context to get the chat adapter from
+     * @param mRecycler The recycler view object to display the messages iteratively
+     */
+    public static void readAllMessagesAndDisplay(View view, Context context, RecyclerView mRecycler) {
 
         // Simple try catch block
         try {
 
+            // List to store chats
             ArrayList<Chat> mChats = new ArrayList<>();
 
             // Set operation to push to automatically get unique UserID with a storage location
@@ -897,33 +906,37 @@ public class ofyDatabase {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
 
+                    // Clear all existing chats
                     mChats.clear();
 
-                    if( snapshot.exists() ){
+                    // If chats exists
+                    if (snapshot.exists()) {
 
-                        for (DataSnapshot chatSnapshot: snapshot.getChildren()) {
+                        // Loop through each chat
+                        for (DataSnapshot chatSnapshot : snapshot.getChildren())
 
-                            Chat mChat = chatSnapshot.getValue(Chat.class);
+                            // Cast chat data into chat class and then add it to the list to store them for display
+                            mChats.add(chatSnapshot.getValue(Chat.class));
 
-                            mChats.add(mChat);
+                        // Set the recycler view to display the latest chats
+                        mRecycler.setAdapter(new ChatAdapter(context, mChats));
 
-                        }
-                        mChatRecycler.setAdapter(new ChatAdapter(fragmentActivity, mChats));
                     }
-
-
 
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
 
+                    // On cancelled throw an exception
+                    throw new RuntimeException(error.toException());
+
                 }
             });
 
         } catch (Exception e) {
             // Catch exception, show a toast error message and print error stack
-            Toast.makeText(fragmentActivity, "Message not sent", Toast.LENGTH_SHORT).show();
+            Snackbar.make(view, "Message not sent", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
