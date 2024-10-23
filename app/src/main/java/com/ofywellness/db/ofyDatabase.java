@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,6 +30,7 @@ import com.ofywellness.R;
 import com.ofywellness.fragments.AddIntakeTab;
 import com.ofywellness.fragments.TrackDietTab;
 import com.ofywellness.fragments.ViewMealTab;
+import com.ofywellness.modals.Chat;
 import com.ofywellness.modals.Meal;
 import com.ofywellness.modals.User;
 import com.ofywellness.register.RegisterActivity;
@@ -852,5 +854,33 @@ public class ofyDatabase {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Sends message to all users
+     *
+     * @param context The context to show toast message
+     */
+    public static void sendMessageToAll(View view, Context context, Chat mChat) {
+
+        try {
+
+            // Set operation to push to automatically get unique UserID with a storage location
+            ofyDatabaseref.child("Messages").child(String.valueOf(System.currentTimeMillis())).setValue(mChat).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        Snackbar.make(view, "Sent", Snackbar.LENGTH_SHORT).show();
+                    } else throw new RuntimeException(task.getException());
+                }
+            });
+
+        } catch (Exception e) {
+            // Catch exception, show a toast error message and print error stack
+            Toast.makeText(context, "Message not sent", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+
+    }
+
 
 }
