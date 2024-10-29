@@ -14,6 +14,8 @@ import androidx.fragment.app.Fragment;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.ofywellness.LoginActivity;
 import com.ofywellness.R;
 import com.ofywellness.UpdateDietTargetActivity;
@@ -46,7 +48,11 @@ public class ProfileTab extends Fragment {
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            // Call GoogleSignInClient's log out method to logout the user
+
+                                //  First logout from firebase
+                                FirebaseAuth.getInstance().signOut();
+
+                                // Then logout from user's google account via GoogleSignInClient's log out method
                                 gsc.signOut().addOnCompleteListener(task -> {
                                     // On logout finish all activities
                                     requireActivity().finish();
