@@ -14,6 +14,7 @@ import com.ofywellness.R;
 import com.ofywellness.modals.Chat;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
@@ -22,9 +23,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     private final Context mContext;
     private final List<Chat> mChats;
 
+    private final String currentUsersEmailID;
+
     public ChatAdapter(Context mContext, List<Chat> chats) {
         this.mChats = chats;
         this.mContext = mContext;
+        // Get the current user's email ID
+        currentUsersEmailID  = GoogleSignIn.getLastSignedInAccount(mContext).getEmail();
     }
 
     @NonNull
@@ -50,9 +55,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     @Override
     public int getItemViewType(int position) {
 
-        // Get the current user's email ID
-        String currentUsersEmailID = GoogleSignIn.getLastSignedInAccount(mContext).getEmail();
-
         // If sender is the current user itself, that is the sender emailID and current user emailID's are equal
         if(mChats.get(position).getSenderEmailID().equals(currentUsersEmailID))
             // Then return right chat type
@@ -64,9 +66,21 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ChatAdapter.ViewHolder holder, int position) {
+
+        // Get the chat object corresponding to this view holder
         Chat chat = mChats.get(position);
+
+        // Set the message to display
         holder.messageTextView.setText(chat.getMessage());
-        holder.senderTextView.setText(chat.getSenderName());
+
+        // Now if the current user is "not" the sender
+        if(!chat.getSenderEmailID().equals(currentUsersEmailID))
+            // Then we display the sender name
+            holder.senderTextView.setText(chat.getSenderName());
+        else
+            // Else we hide the sender name text view as it is not required
+            holder.senderTextView.setVisibility(View.GONE);
+
     }
 
     @Override
