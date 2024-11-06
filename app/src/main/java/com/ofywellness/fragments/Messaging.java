@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.snackbar.Snackbar;
 import com.ofywellness.R;
 import com.ofywellness.db.ofyDatabase;
@@ -60,8 +62,10 @@ public class Messaging extends Fragment {
             // Clear the message field for new message
             messageField.setText(null);
 
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(requireActivity());
+
             // Call database method to send message (to all user's)
-            ofyDatabase.sendMessageToAll(view.findViewById(R.id.messaging_chat_recycler_view), new Chat("Me", message));
+            ofyDatabase.sendMessageToAll(view.findViewById(R.id.messaging_chat_recycler_view), new Chat(account.getDisplayName(),account.getEmail(),message));
 
         });
 

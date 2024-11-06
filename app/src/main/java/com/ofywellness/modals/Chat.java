@@ -1,21 +1,32 @@
 package com.ofywellness.modals;
 
 public class Chat {
-    private String sender;
+    private String senderName;
+    private String senderEmailID;
     private String message;
 
     public Chat() { }
-    public Chat(String sender, String message) {
-        this.sender = sender;
+
+    public Chat(String senderName, String senderEmailID, String message) {
+        this.senderName = senderName;
+        this.senderEmailID = senderEmailID;
         this.message = message;
     }
 
-    public String getSender() {
-        return sender;
+    public String getSenderName() {
+        return senderName;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public String getSenderEmailID() {
+        return senderEmailID;
+    }
+
+    public void setSenderEmailID(String senderEmailID) {
+        this.senderEmailID = senderEmailID;
     }
 
     public String getMessage() {
