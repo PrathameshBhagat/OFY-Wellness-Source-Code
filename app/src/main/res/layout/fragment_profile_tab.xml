@@ -12,8 +12,7 @@
         android:id="@+id/profile_user_name_email_photo_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        app:cardCornerRadius="15dp">
+        android:layout_marginTop="10dp">
 
         <!-- Linear Layout for user's mini-profile display-->
         <LinearLayout
