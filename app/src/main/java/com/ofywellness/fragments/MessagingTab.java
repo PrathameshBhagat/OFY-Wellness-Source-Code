@@ -21,7 +21,7 @@ import com.ofywellness.modals.Chat;
 /**
  * Fragment for Services tab in Home page
  */
-public class Messaging extends Fragment {
+public class MessagingTab extends Fragment {
 
     private RecyclerView mRecyclerView;
 
@@ -62,6 +62,7 @@ public class Messaging extends Fragment {
             // Clear the message field for new message
             messageField.setText(null);
 
+            // Get current user's Google account details
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(requireActivity());
 
             // Call database method to send message (to all user's)

@@ -859,7 +859,7 @@ public class ofyDatabase {
     }
 
     /**
-     * Sends message to all users
+     * Sends a message to all users
      *
      * @param view  The view to show error snack-bar in
      * @param mChat The chat object with the message to be sent
@@ -871,7 +871,6 @@ public class ofyDatabase {
 
             // Set operation to push to automatically get unique UserID with a storage location
             ofyDatabaseref.getRoot().child("Messages").child(String.valueOf(System.currentTimeMillis())).setValue(mChat).addOnCompleteListener(task -> {
-
                 // If task was not successful
                 if (!task.isSuccessful())
                     // Throw an exception, if task is not successful
@@ -901,7 +900,7 @@ public class ofyDatabase {
             // List to store chats
             ArrayList<Chat> mChats = new ArrayList<>();
 
-            // Set operation to push to automatically get unique UserID with a storage location
+            // Add Value Event Listener to update UI on each message update
             ofyDatabaseref.getRoot().child("Messages").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {

@@ -21,7 +21,7 @@ public class AdapterForTabs extends FragmentStateAdapter {
             case 2:
                 return new TrackDietTab();
             case 3:
-                return new Messaging();
+                return new MessagingTab();
             case 4:
                 return new ProfileTab();
             default:

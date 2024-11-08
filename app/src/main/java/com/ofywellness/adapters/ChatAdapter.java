@@ -26,6 +26,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     private final String currentUsersEmailID;
 
     public ChatAdapter(Context mContext, List<Chat> chats) {
+        // Set the chats and context objects
         this.mChats = chats;
         this.mContext = mContext;
         // Get the current user's email ID
@@ -85,6 +86,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
+        // return the total count of chats
         return mChats.size();
     }
 
