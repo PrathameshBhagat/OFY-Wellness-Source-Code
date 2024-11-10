@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="40dp">
 
+    <!-- Card view for message card -->
     <androidx.cardview.widget.CardView
         android:id="@+id/chat_message_card_view"
         android:layout_width="match_parent"
@@ -14,11 +15,13 @@
         android:backgroundTint="#350069"
         app:cardCornerRadius="5dp">
 
+        <!-- Linear layout for message display -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- Text View to display username (this gets hidden by the java code) -->
             <TextView
                 android:id="@+id/chat_sender"
                 android:layout_width="wrap_content"
@@ -29,6 +32,7 @@
                 android:textColor="@color/black"
                 android:textSize="12sp" />
 
+            <!-- Text View to display the message sent by the user -->
             <TextView
                 android:id="@+id/chat_message"
                 android:layout_width="wrap_content"
