@@ -14,9 +14,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,9 +29,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.annotations.NotNull;
 import com.ofywellness.HomeActivity;
 import com.ofywellness.R;
+import com.ofywellness.adapters.ChatAdapter;
 import com.ofywellness.fragments.AddIntakeTab;
 import com.ofywellness.fragments.TrackDietTab;
 import com.ofywellness.fragments.ViewMealTab;
+import com.ofywellness.modals.Chat;
 import com.ofywellness.modals.Meal;
 import com.ofywellness.modals.User;
 import com.ofywellness.register.RegisterActivity;
@@ -853,4 +858,85 @@ public class ofyDatabase {
         }
     }
 
+    /**
+     * Sends a message to all users
+     *
+     * @param view  The view to show error snack-bar in
+     * @param mChat The chat object with the message to be sent
+     */
+    public static void sendMessageToAll(View view, Chat mChat) {
+
+        // Simple try-catch block
+        try {
+
+            // Set operation to push to automatically get unique UserID with a storage location
+            ofyDatabaseref.getRoot().child("Messages").child(String.valueOf(System.currentTimeMillis())).setValue(mChat).addOnCompleteListener(task -> {
+                // If task was not successful
+                if (!task.isSuccessful())
+                    // Throw an exception, if task is not successful
+                    throw new RuntimeException(task.getException());
+            });
+
+        } catch (Exception e) {
+            // Catch exception, show a snack bar error message and print error stack
+            Snackbar.make(view, "Message not sent", Snackbar.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Reads messages from all other users and displays them to the current user
+     *
+     * @param view      The view to show error snack-bar in
+     * @param context   The context to get the chat adapter from
+     * @param mRecycler The recycler view object to display the messages iteratively
+     */
+    public static void readAllMessagesAndDisplay(View view, Context context, RecyclerView mRecycler) {
+
+        // Simple try catch block
+        try {
+
+            // List to store chats
+            ArrayList<Chat> mChats = new ArrayList<>();
+
+            // Add Value Event Listener to update UI on each message update
+            ofyDatabaseref.getRoot().child("Messages").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                    // Clear all existing chats
+                    mChats.clear();
+
+                    // If chats exists
+                    if (snapshot.exists()) {
+
+                        // Loop through each chat
+                        for (DataSnapshot chatSnapshot : snapshot.getChildren())
+
+                            // Cast chat data into chat class and then add it to the list to store them for display
+                            mChats.add(chatSnapshot.getValue(Chat.class));
+
+                        // Set the recycler view to display the latest chats
+                        mRecycler.setAdapter(new ChatAdapter(context, mChats));
+
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                    // On cancelled throw an exception
+                    throw new RuntimeException(error.toException());
+
+                }
+            });
+
+        } catch (Exception e) {
+            // Catch exception, show a toast error message and print error stack
+            Snackbar.make(view, "Message not sent", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
 }
